@@ -553,49 +553,52 @@ public enum EventualResult<Subject> {
     }
 }
 
-public extension DispatchQueue {
-    /**
-     Vends an eventual instance which will be resolved using the outcome of asynchronously executing the supplied closure on the receiver.
-     
-     The value returned by the closure will be used as the vended Eventual's result `.value`, while any error thrown by the closure will be captured as the vended Eventual's `.error`.
-     
-     - parameter work: A closure which returns a value.
-     - returns: A new Eventual instance.
-     */
-    public func eventually<Subject>(execute work: @escaping () throws -> Subject) -> Eventual<Subject> {
-        return Eventual<Subject> { (resolve, reject) -> Void in
-            async {
-                do { resolve(try work()) }
-                catch { reject(error) }
-            }
-        }
-    }
-    
-    /**
-     Vends an eventual instance which will be resolved using the outcome of asynchronously executing the supplied closure on the receiver.
-     
-     The closure itself returns an Eventual whose result, when available, will be used as the result (whether a `.value` or an `.error`) for the vended Eventual.
-     If the closure throws an error, it will be captured as the vended Eventual's `.error`.
-     
-     - parameter work: A closure which returns an Eventual.
-     - returns: A new Eventual instance.
-     */
-    public func eventually<Subject>(execute work: @escaping () throws -> Eventual<Subject>) -> Eventual<Subject> {
-        return Eventual<Subject> { (resolve, reject) -> Void in
-            async {
-                do {
-                    try work().either { result in
-                        switch result {
-                        case .value(let value): resolve(value)
-                        case .error(let error): reject(error)
-                        }
-                    }
-                }
-                catch { reject(error) }
-            }
-        }
-    }
-}
+//HACK: Commented this out to avoid a problem with the auto-generated
+// -Swift.h file trying to extend OS_dispatch_queue. Seems like a bug.
+// Ask Trevor.
+//public extension DispatchQueue {
+//    /**
+//     Vends an eventual instance which will be resolved using the outcome of asynchronously executing the supplied closure on the receiver.
+//     
+//     The value returned by the closure will be used as the vended Eventual's result `.value`, while any error thrown by the closure will be captured as the vended Eventual's `.error`.
+//     
+//     - parameter work: A closure which returns a value.
+//     - returns: A new Eventual instance.
+//     */
+//    public func eventually<Subject>(execute work: @escaping () throws -> Subject) -> Eventual<Subject> {
+//        return Eventual<Subject> { (resolve, reject) -> Void in
+//            async {
+//                do { resolve(try work()) }
+//                catch { reject(error) }
+//            }
+//        }
+//    }
+//    
+//    /**
+//     Vends an eventual instance which will be resolved using the outcome of asynchronously executing the supplied closure on the receiver.
+//     
+//     The closure itself returns an Eventual whose result, when available, will be used as the result (whether a `.value` or an `.error`) for the vended Eventual.
+//     If the closure throws an error, it will be captured as the vended Eventual's `.error`.
+//     
+//     - parameter work: A closure which returns an Eventual.
+//     - returns: A new Eventual instance.
+//     */
+//    public func eventually<Subject>(execute work: @escaping () throws -> Eventual<Subject>) -> Eventual<Subject> {
+//        return Eventual<Subject> { (resolve, reject) -> Void in
+//            async {
+//                do {
+//                    try work().either { result in
+//                        switch result {
+//                        case .value(let value): resolve(value)
+//                        case .error(let error): reject(error)
+//                        }
+//                    }
+//                }
+//                catch { reject(error) }
+//            }
+//        }
+//    }
+//}
 
 private var mainQueueMarkerKey: DispatchSpecificKey<Bool> = {
     let markerKey = DispatchSpecificKey<Bool>()

@@ -32,18 +32,21 @@ extension Optional {
     
 }
 
-public extension DispatchQueue {
-    /**
-     Enqueue a closure for execution, roughly `interval` seconds from now, on a given queue.
-     
-     - parameter interval: The amount of time, meastured as an NSTimeInterval, to wait before executing the block
-     - parameter on: A dispatch_queue on which to execute the block. Defaults to `dispatch_get_main_queue()`.
-     - parameter work: The closure to execute.
-     */
-    public func asyncAfter(interval: TimeInterval, execute work: @escaping @convention(block) () -> Void) {
-        asyncAfter(deadline: DispatchTime.now() + interval, execute: work)
-    }
-}
+// Adds OS_dispatch_queue to EOGKit-swift.h which doesn't exist
+// Commented out for now
+// Ask Trevor
+//public extension DispatchQueue {
+//    /**
+//     Enqueue a closure for execution, roughly `interval` seconds from now, on a given queue.
+//     
+//     - parameter interval: The amount of time, meastured as an NSTimeInterval, to wait before executing the block
+//     - parameter on: A dispatch_queue on which to execute the block. Defaults to `dispatch_get_main_queue()`.
+//     - parameter work: The closure to execute.
+//     */
+//    public func asyncAfter(interval: TimeInterval, execute work: @escaping @convention(block) () -> Void) {
+//        asyncAfter(deadline: DispatchTime.now() + interval, execute: work)
+//    }
+//}
 
 public extension Array {
     
